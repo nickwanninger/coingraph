@@ -12,32 +12,38 @@ program
 	.option('-c, --coin [type]', 'Coin Name (btc, eth, ltc)')
 	.parse(process.argv)
 
-let timeframe = 'week'
+var timeframe = 'week'
 
-let coin = (program.coin || 'BTC').toUpperCase()
+var coin = (program.coin || 'BTC').toUpperCase()
 if ([ 'BTC', 'ETH', 'LTC' ].indexOf(coin) == -1) {
 	console.log(coin + ' is not a valid coin')
 	return process.exit(0)
 }
 
 if (program.hour) timeframe = 'hour'
+if (program.day) timeframe = 'day'
 if (program.week) timeframe = 'week'
 if (program.month) timeframe = 'month'
 if (program.year) timeframe = 'year'
 if (program.all) timeframe = 'all'
 
-const url = 'https://www.coinbase.com/api/v2/prices/' + coin + '-USD/historic?period=' + timeframe
+var url = 'https://www.coinbase.com/api/v2/prices/' + coin + '-USD/historic?period=' + timeframe
 
-const axios = require('axios')
-const blessed = require('blessed')
-const contrib = require('blessed-contrib')
-const moment = require('moment')
-const screen = blessed.screen()
-const options = require('./options.js')
+var axios = require('axios')
+var blessed = require('blessed')
+var contrib = require('blessed-contrib')
+var moment = require('moment')
+var screen = blessed.screen()
+var options = require('./options.js')
 options.label = coin + ' Price over the last ' + timeframe
 
-let line = contrib.line(options)
-screen.append(line) //must append before setting data
+var line = contrib.line(options)
+screen.append(line)
+
+var coinData = {
+	x: [],
+	y: []
+}
 
 screen.key([ 'escape', 'q', 'C-c' ], function(ch, key) {
 	return process.exit(0)
@@ -46,26 +52,31 @@ screen.key([ 'escape', 'q', 'C-c' ], function(ch, key) {
 screen.key([ 'r' ], updateBTCGraph)
 
 async function updateBTCGraph() {
-	const btcData = {
+	var { data } = await axios.get(url)
+	var { prices } = data.data
+	var min = Infinity
+	coinData = {
 		x: [],
 		y: []
 	}
-	const { data } = await axios.get(url)
-	const { prices } = data.data
-	let min = Infinity
-	for (let i = prices.length - 1; i >= 0; i--) {
-		const p = prices[i]
-		const price = Number(p.price)
-		btcData.x.push(moment(p.time).format('M-D-YY HH:MM:ss'))
-		btcData.y.push(Number(price))
+	for (var i = prices.length - 1; i >= 0; i--) {
+		var p = prices[i]
+		var price = Number(p.price)
+		coinData.x.push(moment(p.time).format('M-D-YY HH:MM:ss'))
+		coinData.y.push(Number(price))
 		if (min > price) min = price
 	}
 	min -= 10
-	screen.remove(line)
 	options.minY = min
+	redraw()
+}
+
+function redraw() {
+	screen.remove(line)
+
 	line = contrib.line(options)
 	screen.append(line)
-	line.setData(btcData)
+	line.setData(coinData)
 	screen.render()
 }
 updateBTCGraph()
@@ -74,6 +85,6 @@ setInterval(async () => {
 }, 5000)
 
 screen.on('resize', function() {
-	line.emit('attach')
+	redraw()
 })
 screen.render()
