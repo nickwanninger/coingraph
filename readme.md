@@ -1,5 +1,7 @@
 # coingraph
 ## A simple crypto currency graph for the terminal
+
+![preview](https://i.imgur.com/sxJcYFQ.jpg)
 ---
 ## install
 
