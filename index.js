@@ -3,14 +3,21 @@
 var program = require('commander')
 program
 	.version('0.0.1')
-	.option('-h --hour', 'display hour')
-	.option('-w --week', 'display week')
-	.option('-m --month', 'display month')
-	.option('-y --year', 'display year')
-	.option('-a --all', 'display all')
+	.option('-h, --hour', 'display hour')
+	.option('-w, --week', 'display week')
+	.option('-m, --month', 'display month')
+	.option('-y, --year', 'display year')
+	.option('-a, --all', 'display all')
+	.option('-c, --coin [type]', 'Coin Name (btc, eth, ltc)')
 	.parse(process.argv)
 
 let timeframe = 'week'
+
+let coin = (program.coin || 'BTC').toUpperCase()
+if ([ 'BTC', 'ETH', 'LTC' ].indexOf(coin) == -1) {
+	console.log(coin + ' is not a valid coin')
+	return process.exit(0)
+}
 
 if (program.hour) timeframe = 'hour'
 if (program.week) timeframe = 'week'
@@ -18,7 +25,7 @@ if (program.month) timeframe = 'month'
 if (program.year) timeframe = 'year'
 if (program.all) timeframe = 'all'
 
-const url = 'https://www.coinbase.com/api/v2/prices/BTC-USD/historic?period=' + timeframe
+const url = 'https://www.coinbase.com/api/v2/prices/' + coin + '-USD/historic?period=' + timeframe
 
 const axios = require('axios')
 const blessed = require('blessed')
@@ -26,7 +33,7 @@ const contrib = require('blessed-contrib')
 const moment = require('moment')
 const screen = blessed.screen()
 const options = require('./options.js')
-options.label = 'BTC Price over the last ' + timeframe
+options.label = coin + ' Price over the last ' + timeframe
 
 let line = contrib.line(options)
 screen.append(line) //must append before setting data

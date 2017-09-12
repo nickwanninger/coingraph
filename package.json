@@ -1,10 +1,10 @@
 {
-	"name": "coinr",
-	"version": "1.0.0",
+	"name": "coingraph",
+	"version": "1.0.2",
 	"description": "",
 	"main": "index.js",
 	"bin": {
-		"coinr": "bin/module.js"
+		"coingraph": "bin/module.js"
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
