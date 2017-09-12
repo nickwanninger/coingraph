@@ -7,13 +7,13 @@
 
 ---
 
-## Usage
+## Options
 
-- `coingraph --help` for help
-- `coingraph -h` hour timeframe
-- `coingraph -d` day timeframe
-- `coingraph -w` week timeframe
-- `coingraph -m` month timeframe
-- `coingraph -y` year timeframe
-- `coingraph -a` show value of the coin over its entire life
-- `coingraph -c [name]` name of coin (btc, eth, ltc)
+- `--help` for help
+- `-h` hour timeframe
+- `-d` day timeframe
+- `-w` week timeframe
+- `-m` month timeframe
+- `-y` year timeframe
+- `-a` show value of the coin over its entire life
+- `-c [name]` name of coin (btc, eth, ltc)
