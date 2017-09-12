@@ -4,6 +4,7 @@ var program = require('commander')
 program
 	.version('0.0.1')
 	.option('-h, --hour', 'display hour')
+	.option('-d, --day', 'display day')
 	.option('-w, --week', 'display week')
 	.option('-m, --month', 'display month')
 	.option('-y, --year', 'display year')
